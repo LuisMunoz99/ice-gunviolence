@@ -15,19 +15,16 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input1 = here("import/regdem/input/2022 DEFUNCIONES (CPI)"), 
-             input2 = here("import/regdem/input/`2021 hasta agosto 2022 - clave_ SuC@&sUhP#1`"),
-             output = here("spatial_analysis/ice/import/output/regdem_.csv"))
+args <- list(input1 = here("import/regdem/input/regdem_2021_agosto2022.xlsx"), 
+             input2 = here("import/regdem/input/regdem_2022.xlsx"),
+             output = here("import/regdem/output/regdem2021-2022-child.csv"))
 
 
 # --- Import data --- 
-reg22 <- fread(args$input1)
-reg2021 <- fread(args$input2)
-df <- df_orig 
+reg21 <- fread(args$input1)
+reg22 <- fread(args$input2)
 
 # --- Cleaning ---
-head(df_orig)
-str(df_orig)
 
 
 # Select - Year, age, cause of death 1
@@ -59,6 +56,12 @@ df_2021_minors <- df %>% filter(InscriptionYear == 2021) %>%
 df_2021_minors_firearm <- df_2021_minors %>%
   mutate(death_cause_desc = tolower('DeathCause_I (Desription)')) %>% 
   filter(str_detect(`DeathCause_I (Desription)`, "firearm"))
+
+
+
+# Bind 
+out <- rbind(reg21,reg22)
+ 
 
 
 # --- Export ---
