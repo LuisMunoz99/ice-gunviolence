@@ -150,12 +150,10 @@ regdem21_22 <- regdem21_22 %>%
     firearm = ifelse(str_detect(`DeathCause_I (Desription)`, "(?i)^fire"), 1, 0)
   )
 
- 
-
 
 # --- Export ---
 
-write.csv(df, args$output, row.names = FALSE)
+write.csv(regdem21_22, args$output, row.names = FALSE)
 
 
 
