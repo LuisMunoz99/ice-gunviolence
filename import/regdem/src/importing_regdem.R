@@ -13,7 +13,8 @@ if(!require(pacman))install.packages("pacman")
 p_load(dplyr, 
        here,
        readxl,
-       stringr)
+       stringr,
+       lubridate)
 
 
 args <- list(input1 = here("import/regdem/input/regdem_2021_agosto2022.xlsx"), 
@@ -38,25 +39,27 @@ if (identical(colnames(reg21), colnames(reg22))) {
 ## We are good to bind both datasets 
 
 ## Control number column should represent unique cases
-## Based on this column I will determine missingness and duplication 
+## Based on the Control number I will determine missingness and duplication 
 
 # Verify NA values
 if (any(is.na(c(reg21$ControlNumber, reg22$ControlNumber)))) {
-  print("There are NA values in the 'ControlNumber' column in either reg21 or reg22.")
+  print("Error: There are NA values in the 'ControlNumber' column in either reg21 or reg22.")
 } else {
-  print("There are no NA values in the 'ControlNumber' column in either reg21 or reg22.")
+  print("GOOD")
 }
 
 
 # Verify duplicates in control numbers
 if (any(duplicated(c(reg21$ControlNumber, reg22$ControlNumber)))) {
-  print("There are Duplicated values in the 'ControlNumber' column in either reg21 or reg22.")
+  print("Error: There are Duplicated values in the 'ControlNumber' column in either reg21 or reg22.")
 } else {
-  print("There are no Duplicated values in the 'ControlNumber' column in either reg21 or reg22.")
+  print("GOOD")
 }
 
+## There are duplicated values in both datasets
 
-# Implement changes
+
+# Solving - duplicates
 reg21 <- reg21 %>% 
   distinct(ControlNumber, .keep_all = TRUE)
 
@@ -69,20 +72,14 @@ reg22 %>%
   select(-dupli) %>% 
   print()
 
+## This allows for the fist ocurrence and any other to be recognized when a duplicate
+
+
 reg22 <- reg22 %>% 
   distinct(ControlNumber, .keep_all = TRUE)
 
-## This allows for the fist ocurrence and any other to be recognized when a duplicate
 ## After review the 3 incidents have a single duplicate for them 
 ## By using distinct() I will preserve only one of both incidents 
-
-
-# Summary stats for each dataset
-summary(reg21)
-summary(reg22)
-
-summary(reg21$DateOfDeath_Date)
-summary(reg22$DateOfDeath_Date)
 
 
 # Verifying changes 
@@ -106,14 +103,55 @@ reg22 <- reg22 %>% select(DateOfDeath_Date:InscriptionYear,Name:SecondLastName,
                           'DeathCause_I (ID)','DeathCause_I (Desription)',-Volumen) %>%
   mutate(database = "regdem_2022.xlsx")
 
+# Summary stats for each dataset
+summary(reg21)
+summary(reg22)
+
+summary(reg21$DateOfDeath_Date)
+summary(reg22$DateOfDeath_Date)
+
+
+# Verifying that Inscription years and date are consistent
+reg21 <- reg21 %>%
+  mutate(year_info = year(as.Date(DateOfDeath_Date, format = "%m/%d/%y")))
+
+# Check if all values in the new column match inscription_year
+if (any(reg21$year_info != reg21$InscriptionYear)) {
+  print("Error: Inscription year and death date are not consistent.")
+} else {
+  print("GOOD")
+}
+
+if (any(reg21$year_info != 2021)) {
+  print("Error: Inscription year and death date are not consistent.")
+} else {
+  print("GOOD")
+}
+
+reg22 <- reg22 %>%
+  mutate(year_info = year(as.Date(DateOfDeath_Date, format = "%m/%d/%y")))
+
+if (any(reg22$year_info != reg22$InscriptionYear)) {
+  print("Error: Inscription year and death date are not consistent.")
+} else {
+  print("GOOD")
+}
+
+if (any(reg22$year_info != 2022)) {
+  print("Error: Inscription year and death date are not consistent.")
+} else {
+  print("GOOD")
+}
+
+
+## Discuss with LA, I believe deaths should be based on death date no inscription year
+
+
+
+## Everything seems okay
 
 # Binding datasets for 2021 and 2022
 regdem21_22 <- reg21 %>% rbind(reg22)
-
-#  Conserving deaths only above 1 year old
-regdem21_22 <- regdem21_22 %>% filter(AgeUnit != "Days") %>% 
-  filter(Age != 0) 
-
 
 
 ## STR
@@ -140,6 +178,15 @@ regdem21_22 <- regdem21_22 %>%
     `DeathCause_I (Desription)` = as.character(`DeathCause_I (Desription)`),
     database = as.factor(database)
   )
+
+
+
+
+#  Conserving deaths only above 1 year old
+regdem21_22 <- regdem21_22 %>% filter(AgeUnit != "Days") %>% 
+  filter(Age != 0) 
+
+
 
 
 # Indicator 
