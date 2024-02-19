@@ -34,8 +34,8 @@ child_fire_21 <- regdem %>% filter(year_info == 2021) %>%
          firearm,minors,
          ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
   filter(minors == 1 & firearm == 1) %>% 
-  mutate(longitude = NULL,
-         latitute = NULL)
+  mutate(longitude = NA,
+         latitute = NA)
 
 
 
@@ -45,8 +45,8 @@ child_fire_22  <- regdem %>% filter(year_info == 2022) %>%
          firearm,minors,
          ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
   filter(minors == 1 & firearm == 1) %>% 
-  mutate(longitude = NULL,
-         latitute = NULL)
+  mutate(longitude = NA,
+         latitute = NA)
 
 ## Adding empty variables for manual data entry 
 
