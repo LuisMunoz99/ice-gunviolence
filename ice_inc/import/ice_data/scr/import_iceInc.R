@@ -6,6 +6,8 @@
 # ref: https://www.census.gov/topics/income-poverty/poverty/guidance/poverty-measures.html
 # =========================================
 
+
+### ADAPT THIS FOR ONLY INCOME BUT we need to establish quintiles first 
 # --- libs --- 
 if(!require(pacman))install.packages("pacman")
 p_load(dplyr, 

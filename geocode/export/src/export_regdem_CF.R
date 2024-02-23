@@ -16,7 +16,7 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input = here("import/regdem/output/regdem2021-2022.csv"),
+args <- list(input = here("geocode/import/output/regdem_CF.csv"),
              output = here("geocode/export/output/geocoding_minors.xlsx"))
 
 
@@ -33,7 +33,6 @@ child_fire_21 <- regdem %>% filter(year_info == 2021) %>%
          'DeathCause_I (ID)','DeathCause_I (Desription)',
          firearm,minors,
          ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
-  filter(minors == 1 & firearm == 1) %>% 
   mutate(longitude = NA,
          latitute = NA)
 
@@ -44,28 +43,28 @@ child_fire_22  <- regdem %>% filter(year_info == 2022) %>%
          'DeathCause_I (ID)','DeathCause_I (Desription)',
          firearm,minors,
          ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
-  filter(minors == 1 & firearm == 1) %>% 
   mutate(longitude = NA,
          latitute = NA)
 
 ## Adding empty variables for manual data entry 
 
 
-## Cleaning variables
+## Cleaning variables, not removing anys special characters because these 
+## variables are going to be manually reviewed. 
+
 child_fire_21 <- child_fire_21 %>% 
   mutate_all(~tolower(.)) %>%
-  mutate_all(~str_replace_all(., "\\s+", "")) %>%
-  mutate_all(~str_replace_all(., "[^a-zA-Z0-9]", ""))
+  mutate_all(~str_squish(.))
 
 child_fire_22 <- child_fire_22 %>% 
   mutate_all(~tolower(.)) %>%
-  mutate_all(~str_replace_all(., "\\s+", "")) %>%
-  mutate_all(~str_replace_all(., "[^a-zA-Z0-9]", "")) 
+  mutate_all(~str_squish(.))
+
+
 
 
 ## The first mutate_all(~tolower(.)), it means "apply the tolower function to each column of the data frame."
-## The second mutate_all removes extra spaces with str_replace_all using "\\s+" regex.
-## The third mutate_all removes special characters using str_replace_all with "[^a-zA-Z0-9]" regex.
+## Could use mutate_all to remove special characters using str_replace_all with "[^a-zA-Z0-9]" regex.
 
 
 

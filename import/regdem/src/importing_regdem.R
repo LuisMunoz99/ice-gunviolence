@@ -189,17 +189,7 @@ regdem21_22 <- regdem21_22 %>% filter(AgeUnit != "Days") %>%
 
 
 
-# Indicator 
-#  ICD10 codes related to firearm and Over 1 year old 
 
-regdem21_22 <- regdem21_22 %>%
-  mutate_all(~tolower(.)) %>% 
-  mutate(
-    minors = ifelse(Age >= 1 & Age <= 19, 1, 0),
-    firearm = ifelse(str_detect(`DeathCause_I (Desription)`, "firearm"), 1, 0)
-  )
-
-sum(regdem21_22$firearm)
 
 # --- Export ---
 
