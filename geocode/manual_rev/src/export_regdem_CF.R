@@ -17,7 +17,7 @@ p_load(dplyr,
 
 
 args <- list(input = here("geocode/import/output/regdem_CF.csv"),
-             output = here("geocode/export/output/geocoding_minors.xlsx"))
+             output = here("geocode/manual_rev/output/geocoding_CF.xlsx"))
 
 
 # --- Import data --- 
