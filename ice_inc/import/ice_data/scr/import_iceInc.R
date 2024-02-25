@@ -6,6 +6,11 @@
 # ref: https://www.census.gov/topics/income-poverty/poverty/guidance/poverty-measures.html
 # =========================================
 
+# Importing census data for ICE income indicators
+# to analyze firearm deaths in minors 
+
+### Things to do here, we have just to import all variables involving income
+## After that we will downstream the imputations for quitiles 
 
 ### ADAPT THIS FOR ONLY INCOME BUT we need to establish quintiles first 
 # --- libs --- 
@@ -42,72 +47,63 @@ ice_vars <-
 # Joining vars with information in census var dictionary
 ice_vars_dic <- ice_vars %>% left_join(var_dic, by = "name")
 
-# fetch data from the american community survey API (or application programming interface)
-ICEraceinc <- get_acs(
-  geography = 'tract',
-  state = 'MA',
-  county = '025',
-  geometry = TRUE,
-  year = 2019,
-  variables = variables_dict$var)
 
-# save the geommetry data separately
-ICEraceinc_geometry <- ICEraceinc %>% select(GEOID) %>% unique()
+
+
+# -- libs ---
+if(!require(pacman))install.packages("pacman")
+p_load(dplyr,
+       here,
+       tidycensus,
+       sf,
+       tidyr)
+
+# args {{{
+args <- list(output =
+               here(""))
+
+
+# -- import ---
+ice_inc <- get_acs(
+  geography = "tract",
+  variables = ice_vars$code
+  state = "PR",
+  year = 2022,
+  survey = "acs5",
+  geometry = TRUE,
+  show_call = TRUE)
+
+
+# Vars from Census 
+# B01003_001 = Poblacion total
+# B17001_002 = Personas bajo el nivel de pobreza
+# B02001_002 = Personas blancas 
+# B02001_003 = Personas negras alone 
+
+
+ice_inc_geom <- ice_inc %>% select(GEOID) %>% unique()
 
 # remove geometry data so we can use pivot_wider
-ICEraceinc <- ICEraceinc %>% sf::st_drop_geometry()
+ice_inc <- ice_inc %>% st_drop_geometry()
 
-# pivot to a wide format for renaming, dropping the margin of error data
-ICEraceinc <- ICEraceinc %>% select(-moe) %>% 
-  pivot_wider(names_from = variable, values_from = estimate)
 
-# rename the columns using our rename_vars
-# 
-# first we create a named vector, rename_vars, which has elements that are the
-# acs variables we request and convenient, human readable names.
-# 
-# then we use rename_vars with the rename function from dplyr. 
-# typically the rename function takes a syntax as follows: 
-#   data %>% rename(newname1 = oldname1, newname2 = oldname2, ...)
-# but in our case, we already have a named vector (rename_vars) that we 
-# want to use, and so to use the rename_vars named vector inside rename
-# we use the injection-operator `!!`.  you can learn more about the injection
-# operator by running ?`!!` in your R console. 
-rename_vars <- setNames(variables_dict$var, variables_dict$shortname)
-ICEraceinc <- ICEraceinc %>% rename(!!rename_vars)
+ice_inc <- ice_inc %>% select(-moe) %>% 
+  pivot_wider(names_from = variable, values_from = estimate) %>% 
+  rename(total_pop = B01003_001,
+         persons_below_povertyline = B17001_002,
+         white = B02001_002,
+         black = B02001_003)
 
-# calculate the ICE for racialized economic segregation
-ICEraceinc <- ICEraceinc %>% 
-  mutate(
-    # we calculate the people of color low income counts as the overall 
-    # low income counts minus the white non-hispanic low income counts
-    people_of_color_low_income = 
-      (hhinc_total_1 + hhinc_total_2 + hhinc_total_3 + hhinc_total_4) - 
-      (hhinc_w_1 + hhinc_w_2 + hhinc_w_3 + hhinc_w_4),
-    # sum up the white non-hispanic high income counts
-    white_non_hispanic_high_income = 
-      (hhinc_w_5 + hhinc_w_6 + hhinc_w_7 + hhinc_w_8),
-    # calculate the index of concentration at the extremes for racialized 
-    # economic segregation (high income white non-hispanic vs. low income 
-    # people of color)
-    ICEraceinc = 
-      (white_non_hispanic_high_income - people_of_color_low_income) / 
-      hhinc_total
-  )
+# Remove all census tracts with low pop
+ice_inc <- ice_inc %>% 
+  filter(total_pop > 60)
 
-# now we can merge our spatial geometry data back in
-ICEraceinc <- ICEraceinc_geometry %>% 
-  left_join(ICEraceinc %>% select(GEOID, ICEraceinc))
+# Returning geography data
+out <- ice_inc %>% left_join(ice_inc_geometry)
 
-# visualize our data - 
-# here we use a divergent color palette since the ICEraceinc measure 
-# is divergent in nature
-ggplot(ICEraceinc, aes(fill = ICEraceinc)) +
-  geom_sf() +
-  scale_fill_distiller(palette = 'BrBG') +
-  labs(fill = "ICE for Racialized Economic Segregation:\nWhite non-Hispanic (High Income) vs.\nPeople of Color (Low Income)") +
-  ggtitle(
-    "Index of Concentration at the Extremes, Racialized Economic Segregation",
-    paste0("Suffolk County, MA\n",
-           "Based on American Community Survey 2015-2019 Estimates")
-  ) 
+
+# -- Output ---
+
+write.csv(out, args$output) 
+
+#Done
