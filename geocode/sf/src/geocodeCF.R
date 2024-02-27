@@ -59,7 +59,7 @@ census_tracts_RIP <- st_join(
   PR_tract
 ) 
 
-
+## Verificar si esto resuelve duplicados 
 census_tracts_RIP <- census_tracts_RIP %>%
   group_by(GEOID,NAME) %>%
   summarise(NomList = list(Nom), Count = n()) %>% 
