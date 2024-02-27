@@ -25,8 +25,8 @@ p_load(dplyr,
        tidycensus)
 
 args <- list(input = here("ice_inc/inc_quintiles/output/HIquintiles.csv"),
-             output1 = here("ice_inc/import/ice_data/output/IceCensus.csv"),
-             output2 = here("ice_inc/import/ice_data/notes/IceIncVarsDic.txt"))
+             output1 = here("ice_inc/import/output/IceCensus.csv"),
+             output2 = here("ice_inc/import/notes/IceIncVarsDic.txt"))
 
 
 

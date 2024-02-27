@@ -20,7 +20,7 @@ p_load(argparse,
 
 
 # args {{{
-args <- list(input = here("geocode/coords/src")
+args <- list(input = here("geocode/s/src") NOT DONE
 # }}}
 
 # Deaths data import -----------------------------------------------------

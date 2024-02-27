@@ -16,7 +16,7 @@ p_load(dplyr,
 
 # args {{{
 args <- list(output =
-               here("inc_race_indic/import/output/IncRaceBasedCensus.csv"))
+               here("concentration-ind/import/output/IncRaceBasedCensus.csv"))
 # -- import ---
 inc_race <- get_acs(
   geography = "tract",
