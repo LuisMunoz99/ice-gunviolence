@@ -12,7 +12,6 @@
 ### Things to do here, we have just to import all variables involving income
 ## After that we will downstream the imputations for quintiles 
 
-### ADAPT THIS FOR ONLY INCOME BUT we need to establish  first 
 
 
 # --- libs --- 
@@ -31,10 +30,10 @@ args <- list(input = here("ice_inc/inc_quintiles/output/HIquintiles.csv"),
 
 
 # --- import --- 
-var_dic <- load_variables(2021, "acs5") # Importing all variables in census
+# var_dic <- load_variables(2021, "acs5") # Importing all variables in census
 
 # Variables corresponding to ICE measure
-ice_inc_vars <-
+income_data_vars <-
   tibble::tribble(
     ~name,          ~shortname,      ~desc,
     "B19001_001", 'hhinc_total',   "total household income estimates",
@@ -54,13 +53,13 @@ ice_inc_vars <-
     "B19001_015", 'hhinc14',    "household income $125k-149,999",
     "B19001_016", 'hhinc15',    "household income $150k-199,999",
     "B19001_017", 'hhinc16',    "household income $200k or more",
-    "B01003_001", 'pop_total',    "total population")
+    "B01003_001", 'pop_total',    "total population") # REVISAR ESTA VARIABLE CON LO QUE DICE NANCY 
 
 
 # -- import ---
-ice_inc <- get_acs(
+income_data <- get_acs(
   geography = "tract",
-  variables = ice_inc_vars$name,
+  variables = income_data_vars$name,
   state = "PR",
   year = 2022,
   survey = "acs5",
@@ -69,13 +68,13 @@ ice_inc <- get_acs(
 
 
 
-ice_inc_geom <- ice_inc %>% select(GEOID) %>% unique()
+income_data_geom <- income_data %>% select(GEOID) %>% unique()
 
 # remove geometry data so we can use pivot_wider
-ice_inc <- ice_inc %>% st_drop_geometry() %>% 
+out <- income_data %>% st_drop_geometry() %>% 
   
   # Left join to tibble
-  left_join(ice_inc_vars, by = c("variable" = "name")) %>% 
+  left_join(income_data_vars, by = c("variable" = "name")) %>% 
   
   # Dropping extra vars
   select(-moe, -variable, -desc) %>% 
@@ -88,16 +87,15 @@ ice_inc <- ice_inc %>% st_drop_geometry() %>%
   filter(pop_total > 60)
 
 
-# Returning geography data
-out <- ice_inc %>% left_join(ice_inc_geom)
+
 
 
 # -- Output ---
 # Variable desc
-write.table(ice_inc_vars, args$output2, sep = "\t", quote = FALSE)
+write.table(income_data_vars, args$output2, sep = "\t", quote = FALSE)
 
 # Output
-write.csv(out, args$output1) 
+fwrite(out, args$output1) 
 
 
 

@@ -6,6 +6,8 @@
 # Importing PUMS data for income household 
 # Selecting only variables of interest
 
+## WE HAVE TO CLARIFY IF ITS CORRECT TO EXCLUDE LESS THAN 0 
+
 # -- libs ---
 if(!require(pacman))install.packages("pacman")
 p_load(dplyr,
