@@ -3,8 +3,8 @@
 # Date: 24-feb-24
 # ===========================================
 
-# Importing PUMS data for income household 
-# to establish quintiles for Puerto Rico 
+# Calculating quintiles for Puerto Rico 
+# Based on previous PUMS import
 
 # -- libs ---
 if(!require(pacman))install.packages("pacman")
@@ -15,7 +15,7 @@ p_load(dplyr,
        knitr)
 
 # args {{{
-args <- list(input = here("ice_inc/import/PUMS_inc/output/pumsHIncome.csv"),
+args <- list(input = here("ice_inc/import/output/pumsHIncome.csv"),
              output = here("ice_inc/inc_quintiles/output/HIquintiles22.csv"))
 
 # -- import ---
