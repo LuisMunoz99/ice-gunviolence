@@ -17,8 +17,8 @@ p_load(dplyr,
        tidyr)
 
 # args {{{
-args <- list(input = here("ice_inc/import/input/psam_h72.csv"),
-             output = here("ice_inc/import/output/pumsHIncome.csv"))
+args <- list(input = here("ice_inc/adjust-income/import/input/psam_h72.csv"),
+             output = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"))
 
 data(pums_variables)
 

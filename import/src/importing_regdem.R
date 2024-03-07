@@ -17,9 +17,9 @@ p_load(dplyr,
        lubridate)
 
 
-args <- list(input1 = here("import/regdem/input/regdem_2021_agosto2022.xlsx"), 
-             input2 = here("import/regdem/input/regdem_2022.xlsx"),
-             output = here("import/regdem/output/regdem2021-2022.csv"))
+args <- list(input1 = here("import/input/regdem_2021_agosto2022.xlsx"), 
+             input2 = here("import/input/regdem_2022.xlsx"),
+             output = here("import/output/regdem2021-2022.csv"))
 
 
 # --- Import data --- 

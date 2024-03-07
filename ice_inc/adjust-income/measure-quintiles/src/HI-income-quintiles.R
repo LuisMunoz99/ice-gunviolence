@@ -18,9 +18,7 @@ p_load(dplyr,
        knitr)
 
 # args {{{
-args <- list(input = here("ice_inc/import/output/pumsHIncome.csv"),
-             output = here("ice_inc/quintiles/output/HIquintiles22.csv"))
-
+args <- list(input = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"))
 # -- import ---
 
 pums_inc <- fread(args$input)
@@ -47,7 +45,7 @@ max(pums_inc$HINCP)
 
 ntile_test <- pums_inc %>%
   mutate(inc_quintile = ntile(HINCP, 5)) 
-
+  
 pums_inc %>%
   mutate(inc_quintile = ntile(HINCP, 5)) %>%
   group_by(inc_quintile) %>% 
@@ -68,9 +66,6 @@ quintiles_df <- data.frame(
                "5th Quintile (80% - 100%)"),
   `upper limits` = quintiles[-1]  # Exclude the first value
 )
-
-# Export the table of quintiles to a text file
-write.csv(quintiles_df, args$output)
 
 
 #DONE

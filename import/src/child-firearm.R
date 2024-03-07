@@ -16,7 +16,7 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input = here("import/regdem/output/regdem2021-2022.csv"),
+args <- list(input = here("geocode/import/output/regdem2021-2022.csv"),
              output = here("geocode/import/output/regdem_CF.csv"))
 
 
