@@ -18,7 +18,8 @@ p_load(dplyr,
        knitr)
 
 # args {{{
-args <- list(input = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"))
+args <- list(input = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"),
+             output = here("ice_inc/adjust-income/measure-quintiles/output/HI-quintiles.csv"))
 # -- import ---
 
 pums_inc <- fread(args$input)
@@ -67,6 +68,8 @@ quintiles_df <- data.frame(
   `upper limits` = quintiles[-1]  # Exclude the first value
 )
 
+
+fwrite(quintiles_df, args$output)
 
 #DONE
 

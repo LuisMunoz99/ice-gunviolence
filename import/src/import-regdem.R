@@ -183,8 +183,8 @@ regdem21_22 <- regdem21_22 %>%
 
 
 #  Conserving deaths only above 1 year old
-regdem21_22 <- regdem21_22 %>% filter(AgeUnit != "Days") %>% 
-  filter(Age != 0) 
+# regdem21_22 <- regdem21_22 %>% filter(AgeUnit != "Days") %>% 
+#  filter(Age != 0) 
 
 
 
