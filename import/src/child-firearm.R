@@ -30,6 +30,10 @@ regdem <- fread(args$input)
 # Indicator 
 #  ICD10 codes related to firearm and Over 1 year old 
 
+#  Conserving deaths only above 1 year old
+regdem <- regdem %>% filter(AgeUnit != "Days") %>% 
+  filter(Age != 0) 
+
 regdem <- regdem %>%
   mutate_all(~tolower(.)) %>% 
   mutate(
@@ -44,10 +48,10 @@ table(regdem$minors)
 
 
 # --- Output --- 
-regdem_cf <- regdem %>% filter(minors == 1 & firearm == 1)
+out <- regdem %>% filter(minors == 1 & firearm == 1)
 
 
-fwrite(regdem_cf, args$out)
+fwrite(out, args$out)
 
 
 ## DONE
