@@ -17,8 +17,8 @@ p_load(dplyr,
        tidyr)
 
 # args {{{
-args <- list(input = here("ice_inc/adjust-income/import/input/psam_h72.csv"),
-             output = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"))
+args <- list(input = here("ICE/income-race/adjust-income/import/input/psam_h72.csv"),
+             output = here("ICE/income-race/adjust-income/import/output/pumsHIncome.csv"))
 
 data(pums_variables)
 
@@ -55,5 +55,5 @@ write.csv(pums_inc, args$output)
 
 
 
-# DONE
+# DONE (reviewed Jul 3 2024)
 

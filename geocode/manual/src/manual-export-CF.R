@@ -3,9 +3,8 @@
 # Date: 19-Feb-24
 # =========================================
 
-# Exporting cases of interest for geocoding 
+# Exporting deaths of childrens due to firearm 
 # source = Death Registry database
-
 
 # --- libs --- 
 if(!require(pacman))install.packages("pacman")
@@ -15,11 +14,8 @@ p_load(dplyr,
        openxlsx,
        stringr)
 
-
-
-args <- list(input = here("import/output/"),
+args <- list(input = here("firearm-rip/output/"),
              output = here("geocode/manual/output/geocoding-CF-2018-2022.xlsx"))
-
 
 # --- Import data --- 
 
@@ -30,8 +26,6 @@ for (year in years) {
   file_path <- paste0(args$input, "regdem", year, "-CF.csv")
   regdemCF[[as.character(paste0("regdem",year))]] <- fread(file_path)
 }
-
-
 
 # --- Cleaning  --- 
 
@@ -55,5 +49,5 @@ write.xlsx(list("2018" = regdem_geocode[[1]],
            file = args$output, 
            sheetNames = c("2018", "2019", "2020", "2021", "2022"))
 
-
-## DONE
+:
+## DONE  (reviewed 3 JULY 2024)

@@ -18,8 +18,8 @@ p_load(dplyr,
        knitr)
 
 # args {{{
-args <- list(input = here("ice_inc/adjust-income/import/output/pumsHIncome.csv"),
-             output = here("ice_inc/adjust-income/measure-quintiles/output/HI-quintiles.csv"))
+args <- list(input = here("ICE/income-race/adjust-income/import/output/pumsHIncome.csv"),
+             output = here("ICE/income-race/adjust-income/measure-quintiles/output/HI-quintiles.csv"))
 # -- import ---
 
 pums_inc <- fread(args$input)
@@ -57,8 +57,6 @@ pums_inc %>%
 
 
 # -- Export ---
-
-quintiles
 quintiles_df <- data.frame(
   Quintile = c("1st Quintile (0% - 20%)", 
                "2nd Quintile (20% - 40%)",
@@ -68,16 +66,9 @@ quintiles_df <- data.frame(
   `upper limits` = quintiles[-1]  # Exclude the first value
 )
 
-
 fwrite(quintiles_df, args$output)
 
-#DONE
-
-## Luego de comparar ambas funciones, son muy consistentes. Ordenan los datos
-## Los agrupan en quintiles y puedo pedir que me den el upper limit de cada uno 
-## de estos quintiles. La pregunta es entonces, con que debemos hacer el corte?
-## con el upper limit o con el promedio de ingreso para cada quintil?
-
+#DONE reviewed  3 Jul 2024
 
 
 

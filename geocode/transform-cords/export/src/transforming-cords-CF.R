@@ -19,7 +19,7 @@ p_load(data.table,
 
 
 # args {{{
-args <- list(input = here("geocode/transform-cords/import/output/geocoding-CF-2018-2022-done.csv"), 
+args <- list(input = here("geocode/transform-cords/import-manual/output/geocoding-CF-2018-2022-done.csv"), 
              output =  here("geocode/transform-cords/export/output/geocoded-coords.csv"))
 
 # }}}
@@ -76,7 +76,7 @@ out <- geocoded %>%
 fwrite(out, args$output)
 
 
-
+#  Done (reviewed 3 july 2024) 
 
 
 

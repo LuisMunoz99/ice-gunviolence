@@ -34,12 +34,10 @@ p_load(dplyr,
        tidycensus)
 
 args <- list(
-  output1 = here("ice_inc_race/import/output/IceIncWhiteCensus.csv"),
-  output2 = here("ice_inc_race/import/notes/IceIncWhiteVarsDic.txt"))
+  output1 = here("ICE/income-race/import/output/IceIncWhiteCensus.csv"),
+  output2 = here("ICE/income-race/import/notes/IceIncWhiteVarsDic.txt"))
 
-
-
-
+# export is called IceIncWhiteCensus because the analysis on race is based on white alone
 
 # --- import --- 
 var_dic <- load_variables(2021, "acs5") # Importing all variables in census
@@ -142,11 +140,6 @@ for (i in 1:16) {
              !!sym(paste0("hhinc", i)) - !!sym(paste0("hhinc_white_", i)))
 }
 
-# End of loop
-
-
-
-
 # -- Output ---
 # Variable desc
 write.table(income_data_vars, args$output2, sep = "\t", quote = FALSE)
@@ -156,4 +149,4 @@ fwrite(out_final, args$output1)
 
 
 
-#Done
+#Done (verified in 03-Jul-24)

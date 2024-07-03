@@ -16,8 +16,8 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input2 = here("import/output/"),
-             output = here("import/output/"))
+args <- list(input = here("import/output/"),
+             output = here("firearm-rip/output/"))
 
 
 # --- Import data --- 
@@ -26,7 +26,7 @@ regdem <- list()
 years <- c(2018:2022)
 
 for (year in years) {
-  file_path <- paste0(args$input2, "regdem", year, ".csv")
+  file_path <- paste0(args$input, "regdem", year, ".csv")
   regdem[[as.character(paste0("regdem",year))]] <- fread(file_path)
 }
 
@@ -57,9 +57,6 @@ regdem_done <- lapply(regdem, function(df) {
 
 
 
-
-
-
 # --- Output --- 
 
 out <- lapply(regdem_done, function(df) {
@@ -67,7 +64,7 @@ out <- lapply(regdem_done, function(df) {
   return(df)
 })
 
-
+# separating each year into a different csv file 
 for (i in seq_along(out)) {
   write.csv(out[[i]], 
             file = paste0(args$output, names(regdem)[i], "-CF.csv"), 
@@ -76,4 +73,6 @@ for (i in seq_along(out)) {
 
 
 
-#Done 
+#Done (reviewed in 3 Jul 2024)
+
+

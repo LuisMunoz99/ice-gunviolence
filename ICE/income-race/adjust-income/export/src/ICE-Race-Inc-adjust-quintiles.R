@@ -17,10 +17,10 @@ p_load(dplyr,
        here)
 
 # args {{{
-args <- list(input1 = here("ice_inc_race/import/output/IceIncWhiteCensus.csv"),
-             input2 = here("ice_inc/adjust-income/measure-quintiles/output/HI-quintiles.csv"),
-             hand = here("ice_inc_race/import/notes/IceIncWhiteVarsDic.txt"),
-             output = here("ice_inc_race/adjust-income/export/output/IceIncRace-adjusted.csv"))
+args <- list(input1 = here("ICE/income-race/import/output/IceIncWhiteCensus.csv"),
+             input2 = here("ICE/income-race/adjust-income/measure-quintiles/output/HI-quintiles.csv"),
+             hand = here("ICE/income-race/import/notes/IceIncWhiteVarsDic.txt"),
+             output = here("ICE/income-race/adjust-income/export/output/IceIncRace-adjusted.csv"))
 
 # -- Import ---
 income_census <- fread(args$input1)
@@ -83,5 +83,5 @@ income_adjusted <- income_census %>%
 # -- Output ---
 fwrite(income_adjusted, args$output)
 
-## Final task will be used to create the Quintiles. 
+##  done (reviewed 3 july 2024)
 
