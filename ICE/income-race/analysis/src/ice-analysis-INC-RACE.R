@@ -18,7 +18,7 @@ p_load(dplyr,
        tidyr)
 
 # args {{{
-args <- list(input = here("ice_inc_race/merge/output/IceIncRace-geo-final.csv"),
+args <- list(input = here("ICE/income-race/merge/output/IceIncRace-geo-final.csv"),
              output = here(""))
 
 # Import ICE data (new task to merge)fre
@@ -65,10 +65,7 @@ ice_inc_race <- ice_inc_race %>%
 
 
 
-
 # 3. Calculate mortality rates for each group of quintiles of ICE (Q1,Q2,Q3,Q4,Q5)
-
-
 ice_inc_race %>%
   group_by(ICEquintile) %>% 
   filter(!is.na(ICEquintile)) %>% 
