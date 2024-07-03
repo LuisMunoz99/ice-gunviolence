@@ -17,6 +17,7 @@ p_load(dplyr,
 # args {{{
 args <- list(output =
                here("concentration-ind/import/output/IncRaceBasedCensus.csv"))
+
 # -- import ---
 inc_race <- get_acs(
   geography = "tract",
@@ -56,7 +57,7 @@ inc_race <- inc_race %>%
   filter(total_pop > 60)
 
 # Returning geography data
-out <- inc_race %>% left_join(inc_race_geometry)
+out <- inc_race 
 
 
 # -- Output ---

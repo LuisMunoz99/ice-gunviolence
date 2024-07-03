@@ -16,19 +16,12 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input = here("geocode/import/output/regdem2021-2022.csv"),
-             output = here("geocode/import/output/regdem_CF.csv"))
+args <- list(input = here("import/output/regdem2021-2022.csv"),
+             output = here("import/output/regdem_CF.csv"))
 
 
 # --- Import data --- 
 regdem <- fread(args$input)
-
-
-
-# --- Cleaning --- 
-
-# Indicator 
-#  ICD10 codes related to firearm and Over 1 year old 
 
 #  Conserving deaths only above 1 year old
 regdem <- regdem %>% filter(AgeUnit != "Days") %>% 
@@ -53,5 +46,3 @@ out <- regdem %>% filter(minors == 1 & firearm == 1)
 
 fwrite(out, args$out)
 
-
-## DONE

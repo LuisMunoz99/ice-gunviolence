@@ -39,11 +39,15 @@ ice_inc <- fread(args$input)
 # calculate the ICE for racialized economic segregation
 ice_inc <- ice_inc %>% 
   mutate(
+    hhinc_total = hhinc_7808+hhinc2+hhinc3+hhinc4+hhinc5+hhinc6+hhinc7+hhinc8+
+      hhinc_49300+hhinc10+hhinc11+hhinc12+hhinc13+hhinc14+hhinc15+hhinc16,
+    
     people_deprived  = hhinc_7808,
+    
     people_afluent = (hhinc_49300 + hhinc10 + hhinc11 + hhinc12 + hhinc13 +
       hhinc14 + hhinc15 + hhinc16),
     ICEinc = 
-      (people_deprived - people_afluent) / 
+      (people_afluent - people_deprived) / 
       hhinc_total) 
 
 
@@ -58,11 +62,55 @@ ice_inc <- ice_inc %>%
 
 # 3. Calculate mortality rates for each group of quintiles of ICE (Q1,Q2,Q3,Q4,Q5)
 
-ice_inc %>%
+x <- ice_inc %>%
   group_by(ICEquintile) %>% 
   summarise(child_rip = sum(RIP),
-            total_pop = sum(pop_total),    # Aqui uso la poblacion del tramo censal
-            rate = (child_rip / total_pop) * 1000000)
+            total_pop = sum(pop_total),    
+            rate = (child_rip / total_pop) * 100000) %>% 
+  mutate(proportion = child_rip / sum(child_rip),
+         total_cases_faltantes = 100,
+         casos_faltantes = total_cases_faltantes * proportion,
+         child_rip_adjusted = casos_faltantes + child_rip,
+         rate_adjusted = (child_rip_adjusted / total_pop) * 100000)
+
+
+ice_inc %>%
+  group_by(ICEquintile) %>% 
+  filter(!is.na(ICEquintile)) %>% 
+  summarise(child_rip = sum(RIP),
+            total_pop = sum(pop_total),    
+            rate = round((child_rip / total_pop) * 100000, 2)) 
+
+
+
+
+
+library(gt)
+
+ice_inc <- YOUR_DATASET_HERE  # Make sure to replace YOUR_DATASET_HERE with your actual dataset
+
+gt_table <- gt(ice_inc) %>%
+  # Table Title 
+  tab_header(
+    title = "Mortality Rates by ICE Quintile"
+  ) %>%
+  # Column Labels
+  cols_label(
+    Children_who_Died = "Children Who Died",
+    Total_Population = "Total Population",
+    Mortality_Rate = "Mortality Rate (per 100,000)"
+  ) %>%
+  # Table Body 
+  # Add footnote text to caption
+  tab_spanner(
+    label = "Column Labels",
+    Children_who_Died ~ Mortality_Rate
+  ) %>%
+  tab_footnote(
+    footnote = "Mortality Rate is age-adjusted"
+  ) %>%
+  # ... rest of the code for table theme remains the same ...
+  
 
 
 
@@ -71,3 +119,6 @@ ice_inc %>%
 
 
 
+
+
+#

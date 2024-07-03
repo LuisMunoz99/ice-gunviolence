@@ -16,63 +16,44 @@ p_load(dplyr,
        stringr)
 
 
-args <- list(input = here("geocode/import/output/regdem_CF.csv"),
-             output = here("geocode/manual/output/geocoding_CF.xlsx"))
+
+args <- list(input = here("import/output/"),
+             output = here("geocode/manual/output/geocoding-CF-2018-2022.xlsx"))
 
 
 # --- Import data --- 
-regdem <- fread(args$input)
+
+regdemCF <- list()
+years <- c(2018:2022)
+
+for (year in years) {
+  file_path <- paste0(args$input, "regdem", year, "-CF.csv")
+  regdemCF[[as.character(paste0("regdem",year))]] <- fread(file_path)
+}
 
 
 
-# --- Cleaning --- 
+# --- Cleaning  --- 
 
-## SEPARATE THEM IN DIFFERENT YEAR EACH SHEET
-child_fire_21 <- regdem %>% filter(year_info == 2021) %>% 
-  select(year_info,ControlNumber,Name, LastName,
-         'DeathCause_I (ID)','DeathCause_I (Desription)',
-         firearm,minors,
-         ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
-  mutate(longitude = NA,
-         latitute = NA)
-
-
-
-child_fire_22  <- regdem %>% filter(year_info == 2022) %>% 
-  select(year_info,ControlNumber,Name, LastName,
-         'DeathCause_I (ID)','DeathCause_I (Desription)',
-         firearm,minors,
-         ResidencePlaceAddress1:ResidencePlaceAddressZip) %>% 
-  mutate(longitude = NA,
-         latitute = NA)
-
-## Adding empty variables for manual data entry 
-
-
-## Cleaning variables, not removing anys special characters because these 
-## variables are going to be manually reviewed. 
-
-child_fire_21 <- child_fire_21 %>% 
-  mutate_all(~tolower(.)) %>%
-  mutate_all(~str_squish(.))
-
-child_fire_22 <- child_fire_22 %>% 
-  mutate_all(~tolower(.)) %>%
-  mutate_all(~str_squish(.))
+regdem_geocode <- lapply(regdemCF, function(df) {
+  df <- df %>%
+    mutate_all(~tolower(.)) %>%
+    mutate_all(~str_squish(.)) %>% 
+    mutate(longitude = NA,
+           latitude = NA)  
+})
 
 
 
-
-## The first mutate_all(~tolower(.)), it means "apply the tolower function to each column of the data frame."
-## Could use mutate_all to remove special characters using str_replace_all with "[^a-zA-Z0-9]" regex.
-
-
-
-
-# --- Output --- 
-write.xlsx(list("2021" = child_fire_21, "2022" = child_fire_22), 
+# --- Export  --- 
+  
+write.xlsx(list("2018" = regdem_geocode[[1]],
+                "2019" = regdem_geocode[[2]],
+                "2020" = regdem_geocode[[3]], 
+                "2021" = regdem_geocode[[4]], 
+                "2022" = regdem_geocode[[5]]),
            file = args$output, 
-           sheetNames = c("2021", "2022"))
+           sheetNames = c("2018", "2019", "2020", "2021", "2022"))
 
 
 ## DONE

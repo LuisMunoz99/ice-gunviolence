@@ -6,71 +6,39 @@
 
 # libs
 if(!require(pacman))install.packages("pacman")
-p_load(argparse,
-       tidyverse,
+p_load(data.table,
+       here,
        sf,
-       tidycensus,
-       dplyr, 
-       arrow,
-       googlesheets4,
-       tidyr)
-
+       dplyr)
 
 # Useful function 
 
 
 # args {{{
-args <- list(input = "https://docs.google.com/spreadsheets/d/1JOLwi2ZD19OBzzdPZDpATYGaaeg0gtcDuGHCsoQCBvg/edit?usp=sharing")
+args <- list(input1 = here("concentration-ind/import/output/IncRaceBasedCensus.csv"),
+             input2 = here("concentration-ind/geocode/output/geocoded-coords.csv"),
+             output = here("concentration-ind/merge/output/fatal-victims-final.csv"))
 # }}}
 
-# Deaths data import -----------------------------------------------------
-
-# Importing Banco de victimas fatales interno 
-df_orig <- read_sheet(args$input, sheet = "Geocodificacion")
 
 
-df <- df_orig %>% select(Nom,FechaRIP,latitud,longitud,`Census tract`) %>% 
-  rename(longitude = longitud,
-         latitude = latitud) %>% filter(!is.na(longitude))
-
-
-
-# Converting the coordinates into simple features objects
-df_coords <- df %>%
-  st_as_sf(coords = c("longitude", "latitude"),
-           crs = 4326) %>% st_transform(6440)
-
-
-# Importing geometry census data
-
-PR_tract <- get_acs(
-  geography = "tract",
-  variables = c("B01003_001"),
-  state = "PR",
-  year = 2021,
-  geometry = TRUE
-) %>%
-  st_transform(6440)
+# Import
+census <- fread(args$input1)
+fatal_uf <- fread(args$input2)
 
 
 # Merging data 
-census_tracts_RIP <- st_join(
-  df_coords,
-  PR_tract
-) 
+out <- census %>% 
+  left_join(fatal_uf, by = "GEOID") %>% 
+  mutate(Count = if_else(is.na(Count), 0, Count))
 
 
-census_tracts_RIP <- census_tracts_RIP %>%
-  group_by(GEOID,NAME) %>%
-  summarise(NomList = list(Nom), Count = n()) %>% 
-  mutate(NomList = as.character(NomList))
 
 
 
 
 # Output
-write.csv(census_tracts_RIP, "input/census_tracts_RIP.csv", row.names = FALSE)
-
+write.csv(out,args$output, row.names = FALSE)
 
 
 

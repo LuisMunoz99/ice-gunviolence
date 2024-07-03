@@ -19,7 +19,7 @@ p_load(data.table,
 
 
 # args {{{
-args <- list(input = here("geocode/transform-cords/import/output/geocodingCF-manual-done.csv"), 
+args <- list(input = here("geocode/transform-cords/import/output/geocoding-CF-2018-2022-done.csv"), 
              output =  here("geocode/transform-cords/export/output/geocoded-coords.csv"))
 
 # }}}
@@ -38,25 +38,24 @@ PR_tract <- get_acs(
 
 
 
-# -- Clealing ---
+
+# -- Cleaning ---
 
 
 child_firearm <- child_firearm %>%
-  mutate(full_name = paste(Name, LastName, sep = " ")) %>% 
-  select(-ControlNumber, -firearm, -minors, -Name, -LastName) %>% 
-  filter(!is.na(latitute) | !is.na(longitude))
+  filter(!is.na(latitude) | !is.na(longitude))
 
 
 # Converting into simple features
 child_firearm_sf <- child_firearm %>%
-  st_as_sf(coords = c("longitude", "latitute"), crs = 4326) %>%
+  st_as_sf(coords = c("latitude", "longitude"), crs = 4326) %>%
   st_transform(6440) 
 
 
 
 
 # Combining sf to census
-out <- st_join(
+geocoded <- st_join(
   child_firearm_sf,
   PR_tract
 ) 
@@ -64,7 +63,7 @@ out <- st_join(
 
 
 # Assuming your dataframe is named child_firearm
-out <- out %>%
+out <- geocoded %>%
   group_by(GEOID) %>%
   mutate(RIP = n()) %>%
   ungroup() %>% distinct(GEOID, .keep_all = TRUE)

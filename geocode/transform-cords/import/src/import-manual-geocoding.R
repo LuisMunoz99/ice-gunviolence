@@ -15,8 +15,8 @@ p_load(dplyr,
        readxl)
 
 
-args <- list(input = here("geocode/transform-cords/import/input/geocodingCF-done.xlsx"),
-             output = here("geocode/transform-cords/import/output/geocodingCF-manual-done.csv"))
+args <- list(input = here("geocode/transform-cords/import/input/geocoding-CF-2018-2022-done.xlsx"),
+             output = here("geocode/transform-cords/import/output/geocoding-CF-2018-2022-done.csv"))
 
 
 # --- Import data --- 
@@ -24,20 +24,13 @@ child_firearm <- list()
 
 all_sheets <- excel_sheets(args$input)
 
-
 for (ind in all_sheets) {
-  child_firearm[[ind]] <- read_excel(args$input, sheet = ind)
+  child_firearm[[as.character(paste0("regedem",ind))]] <- read_excel(args$input, sheet = ind)
 }
 
 
-
-
 # --- Cleaning  --- 
-
-cf2021 <- child_firearm$`2021`
-cf2022 <- child_firearm$`2022`
-
-out <- rbind(cf2021,cf2022)
+out <- bind_rows(child_firearm)
 
 
 # --- Output --- 
